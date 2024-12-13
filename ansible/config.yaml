@@ -1,0 +1,44 @@
+---
+- name: Set up MiniTwitter server on EC2
+  hosts: server
+  become: true
+  tasks:
+    - name: Update packages
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Install Python 3, pip, and git
+      dnf:
+        name:
+          - python3
+          - python3-pip
+          - git
+        state: present
+
+    - name: Clone MiniTwitter repository if not already cloned
+      git:
+        repo: https://github.com/MlCHAL-S/MiniTwitter.git
+        dest: /home/ec2-user/mini-twitter
+        update: no
+        force: no
+
+    - name: Install Python dependencies from requirements.txt
+      pip:
+        requirements: /home/ec2-user/mini-twitter/requirements.txt
+
+    - name: Set PYTHONPATH environment variable
+      lineinfile:
+        path: /etc/environment
+        line: "PYTHONPATH=/home/ec2-user/mini-twitter/src:$PYTHONPATH"
+        state: present
+
+    - name: Source environment variables
+      shell: "source /etc/environment"
+      args:
+        executable: /bin/bash
+
+    - name: Run MiniTwitter server in the background
+      shell: "nohup python3 -m src.server.server &"
+      args:
+        chdir: /home/ec2-user/mini-twitter
