@@ -2,18 +2,22 @@
 Module for Client
 """
 
+import sys
 import grpc
 from .. import minitwitter_pb2, minitwitter_pb2_grpc
 
 
-def run() -> None:
+def run(server_ip: str) -> None:
     """
     Run the client application.
 
     This function establishes a gRPC channel, listens for user input, and processes
     commands to send or retrieve messages or exit the client application.
+
+    Args:
+        server_ip (str): The IP address of the server to connect to.
     """
-    with grpc.insecure_channel('52.59.74.217:50051') as channel:
+    with grpc.insecure_channel(f'{server_ip}:50051') as channel:
         stub = minitwitter_pb2_grpc.MiniTwitterStub(channel)
 
         while True:
@@ -47,4 +51,9 @@ def run() -> None:
 
 
 if __name__ == "__main__":
-    run()
+    if len(sys.argv) != 2:
+        print("Usage: python -m src.client.client <server_ip>")
+        sys.exit(1)
+
+    server_ip = sys.argv[1]
+    run(server_ip)
