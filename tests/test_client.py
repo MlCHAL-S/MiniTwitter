@@ -34,7 +34,7 @@ def test_exit_command() -> None:
     """
     with mock.patch('builtins.input', side_effect=["EXIT"]):
         with mock.patch('builtins.print') as mock_print:
-            run()  # Call the client code
+            run("10.10.10.10")  # Call the client code
             # Verify that "Exiting..." message is printed
             mock_print.assert_any_call("Exiting...")
 
@@ -53,7 +53,7 @@ def test_send_command(mock_grpc_and_stub: tuple) -> None:
 
     with mock.patch('builtins.input', side_effect=["SEND Hello, world!", "EXIT"]):
         with mock.patch('builtins.print') as mock_print:
-            run()  # Call the client code
+            run("10.10.10.10")  # Call the client code
 
             mock_stub_instance.sendMessage.assert_called_once_with(
                 minitwitter_pb2.MessageRequest(message='Hello, world!')
@@ -78,7 +78,7 @@ def test_get_command(mock_grpc_and_stub: tuple) -> None:
 
     with mock.patch('builtins.input', side_effect=['GET 5', 'EXIT']):
         with mock.patch('builtins.print') as mock_print:
-            run()  # Call the client code
+            run("10.10.10.10")  # Call the client code
 
             mock_stub_instance.getMessages.assert_called_once_with(
                 minitwitter_pb2.MessageListRequest(count=5)
@@ -100,7 +100,7 @@ def test_get_invalid_count() -> None:
     """
     with mock.patch('builtins.input', side_effect=['GET abc', 'EXIT']):
         with mock.patch('builtins.print') as mock_print:
-            run()  # Call the client code
+            run("10.10.10.10")  # Call the client code
             mock_print.assert_any_call('Invalid count. Please enter an integer.')
             mock_print.assert_any_call('Exiting...')
 
@@ -114,7 +114,7 @@ def test_invalid_command() -> None:
     """
     with mock.patch('builtins.input', side_effect=['UNKNOWN', 'EXIT']):
         with mock.patch('builtins.print') as mock_print:
-            run()  # Call the client code
+            run("10.10.10.10")  # Call the client code
             mock_print.assert_any_call(
                 'Invalid command. Use SEND <message>, GET <num_of_messages> or EXIT.'
             )
