@@ -13,7 +13,7 @@ def run() -> None:
     This function establishes a gRPC channel, listens for user input, and processes
     commands to send or retrieve messages or exit the client application.
     """
-    with grpc.insecure_channel('52.59.74.217:50051') as channel:
+    with grpc.insecure_channel('18.192.5.189:50051') as channel:
         stub = minitwitter_pb2_grpc.MiniTwitterStub(channel)
 
         while True:
