@@ -65,6 +65,11 @@ The MiniTwitter project is built with the following components:
 
 ## Running the Application
 
+### Set PYTHONPATH
+```bash
+export PYTHONPATH=src:$PYTHONPATH
+```
+
 ### Starting the Server
 To start the MiniTwitter server, run:
 ```bash
