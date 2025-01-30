@@ -23,22 +23,34 @@
         update: no
         force: no
 
+    - name: Ensure logs directory exists
+      file:
+        path: /home/ec2-user/mini-twitter/logs
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+
     - name: Install Python dependencies from requirements.txt
       pip:
         requirements: /home/ec2-user/mini-twitter/requirements.txt
+        executable: pip3
 
     - name: Set PYTHONPATH environment variable
       lineinfile:
         path: /etc/environment
-        line: "PYTHONPATH=/home/ec2-user/mini-twitter/src:$PYTHONPATH"
+        line: "PYTHONPATH=/home/ec2-user/mini-twitter/src"
         state: present
 
-    - name: Source environment variables
-      shell: "source /etc/environment"
+    - name: Ensure PYTHONPATH is sourced on login
+      shell: "echo 'export PYTHONPATH=/home/ec2-user/mini-twitter/src' >> /home/ec2-user/.bashrc"
+
+    - name: Restart shell to apply environment changes
+      shell: "source /home/ec2-user/.bashrc"
       args:
         executable: /bin/bash
 
-    - name: Run MiniTwitter server in the background
-      shell: "nohup python3 -m src.server.server &"
+    - name: Run MiniTwitter server with nohup
+      shell: "nohup python3 -m src.server.server > /home/ec2-user/mini-twitter/logs/server.log 2>&1 &"
       args:
         chdir: /home/ec2-user/mini-twitter
