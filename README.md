@@ -10,6 +10,10 @@ MiniTwitter is a simple gRPC-based microservice application designed to simulate
 - **Retrieve Messages**: Clients can fetch the latest messages up to a specified limit.
 - **In-Memory Storage**: Messages are stored in memory for simplicity.
 - **gRPC Communication**: Protocol Buffers are used to define data and service communication.
+- **CI/CD**: Automated testing and linting through GitHub Actions.
+- **Logging System**: A `logs/` folder is used for debugging and tracking system behavior.
+- **High Test Coverage**: Over **90%** code coverage with `pytest`.
+- **Linting**: `pylint` reports **10/10** for both `client.py` and `server.py`.
 
 ---
 
@@ -73,14 +77,14 @@ export PYTHONPATH=src:$PYTHONPATH
 ### Starting the Server
 To start the MiniTwitter server, run:
 ```bash
-python server.py
+python -m src.server.server
 ```
 The server listens on `localhost:50051` for gRPC connections.
 
 ### Running the Client
 To start the MiniTwitter client, run:
 ```bash
-python client.py
+python -m src.client.client
 ```
 The client provides a simple CLI for interacting with the server:
 - `SEND <message>`: Send a tweet to the server.
@@ -102,9 +106,57 @@ The tests validate:
 - Correct functionality of gRPC methods (`sendMessage`, `getMessages`).
 - Interaction between client and server using mocked gRPC stubs.
 
+Tests cover over 90% of the code:
+```bash
+Name                   Stmts   Miss  Cover   Missing
+----------------------------------------------------
+src/client/client.py      39      5    87%   73-78
+src/server/server.py      26      1    96%   77
+----------------------------------------------------
+TOTAL                     65      6    91%
+```
+
+### Linting
+The project follows PEP8 coding standards. `pylint` results:
+```bash
+client.py: 10/10
+server.py: 10/10
+```
+
+## Deployment
+
+### Using Ansible
+
+To deploy the MiniTwitter server using Ansible:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/config.yaml
+```
+
+### Infrastructure as Code (Terraform) 
+Infrastructure is managed with Terraform: 
+* **`main.tf`**: Defines AWS resources (VPC, EC2, Security Groups).
+* **`vars.tf`**: Configurable parameters.
+* **`output.tf`**: Stores deployment details.
+
+### Continuous Integration (CI)
+CI is handled with GitHub Actions (`.github/workflows/ci.yaml`): 
+* Runs on pull requests to `main`.
+* Steps include:
+  * **Code checkout**
+  * **Python environment setup**
+  * **Dependency installation**
+  * **Linting with `pylint`**
+  * **Running tests with `pytest`**
+
 ---
 
-## Configuration
+## Contributors 
+* **Michał Szynkaruk (`MlCHAL-S`)** 
+* **Oliwia Witkowska (`olivblvck`)** 
+* **Jakub Sienski (`KubaSienski`)** 
 
-- Modify `minitwitter.proto` to change gRPC service or message definitions.
-- Use `pytest.ini` and `pylintrc` for testing and linting preferences.
+---
+
+## Documentation
+For a detailed explanation, refer to [the full documentation](docs/documentation.pdf).
